@@ -39,6 +39,14 @@ def select(message, options, numerate=True):
     return selection
 
 
+def load_players(n_players):
+    """ Generates a dictionary of players
+
+    :param n_players: number of players to create
+    :return: dictionary of players
+    """
+    return None
+
 def start():
     """ Game configuration menu
 
@@ -48,7 +56,7 @@ def start():
               'players': []}
     clear()
     # print("Please, type the number of players")
-    n_players = select("Please, select the number of players.",
-                       ["2", "3", "4"], numerate=False)
-    print(n_players)
+    n_players = int(select("Please, select the number of players.",
+                       ["2", "3", "4"], numerate=False))
+    # load players
     return None
