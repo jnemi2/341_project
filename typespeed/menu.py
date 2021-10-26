@@ -1,4 +1,9 @@
 import os
+import typespeed.players as ply
+import typespeed.game
+
+max_players = 4
+min_players = 2
 
 
 def clear():
@@ -29,34 +34,114 @@ def select(message, options, numerate=True):
     else:
         for i in options:
             print("- " + i)
-    selection = input(">>").lower()
+    selection = input(">>").strip().lower()
     # validation
     while selection not in options and (not numerate or (selection not in n_options)):
-        selection = input("Please, enter a valid option>>").lower()
+        selection = input("Please, enter a valid option>>").strip().lower()
     # returning a valid option
     if selection not in options:
         return options[int(selection) - 1]
     return selection
 
 
-def load_players(n_players):
-    """ Generates a dictionary of players
-
-    :param n_players: number of players to create
-    :return: dictionary of players
+def add_player(players):
+    """ Adds a new player to the list of players
+    :param players: list of players
     """
-    return None
+    if len(players) < max_players:
+        name = input("Enter player's name: ")
+        player_type = select("Select player type:", ["human", "bot"])
+        if player_type == "human":
+            # new human
+            players.append(ply.new_player(name))
+        else:
+            # new bot
+            bot_accuracy = select("Select bot difficulty", ["easy", "smart", "hard"])
+            if bot_accuracy == "easy":
+                bot_accuracy = 0.65
+            elif bot_accuracy == "smart":
+                bot_accuracy = 0.75
+            else:
+                bot_accuracy = 0.85
+            players.append(ply.new_bot(name, bot_accuracy))
+    else:
+        print("The maximum number of players has been reached.\n")
+
+
+def display_players(players):
+    """ Prints a list with player information
+    :param players: list of players to display
+    """
+    for i in range(len(players)):
+        print(str(i+1) + "- " + ply.format_player(players[i]))
+    print("\n")
+
+
+def remove_player(players):
+    """ Removes a player from the list of players
+    :param players: list of players
+    """
+    if len(players) > 0:
+        display_players(players)
+        to_remove = input("Please, select the index of the player you'd like to remove: ")
+        try:
+            players.pop(int(to_remove) - 1)
+        except:
+            print("Unable to remove player number " + to_remove + ".\n")
+        else:
+            print("Player removed successfully.\n")
+    else:
+        print("There are no players.\n")
+
+
+def edit_players(players):
+    """ Generates a list of players
+    :param players: list of players to edit
+    :return: list of players
+    """
+    clear()
+    selection = select("Options: ", ["list players", "add a player", "remove a player", "back"], numerate=True)
+    while selection != "back":
+        if selection == "list players":
+            display_players(players)
+        elif selection == "add a player":
+            add_player(players)
+        else:
+            remove_player(players)
+        selection = select("Options: ", ["list players", "add a player", "remove a player", "back"], numerate=True)
+
+
+def config_game(config):
+    """ Configures and starts a game with user parameters
+    :param config: dictionary with game information
+    """
+    clear()
+    print("New game")
+    selection = select("Options: ", ["start", "edit players", "back"])
+    while selection != "back":
+        if selection == "edit players":
+            edit_players(config['players'])
+        else:
+            if len(config['players']) < min_players:
+                print("You cannot play with less than " + str(min_players) + " players.")
+            else:
+                config['mode'] = select("Select a game mode:", ["easy", "normal", "hard", "typespeed"])
+                typespeed.game.start(config)
+                break
+        selection = select("Options: ", ["start", "edit players", "back"])
+
 
 def start():
-    """ Game configuration menu
-
-    :return: dictionary with game parameters
+    """ Game menu
     """
-    config = {'mode': "default", 'difficulty': "normal",
-              'players': []}
-    clear()
-    # print("Please, type the number of players")
-    n_players = int(select("Please, select the number of players.",
-                       ["2", "3", "4"], numerate=False))
-    # load players
-    return None
+    config = {'mode': "normal", 'players': []}
+    selection = select("Options: ", ["new game", "resume game", "exit"])
+    while selection != "exit":
+        if selection == "new game":
+            config_game(config)
+        elif selection == "resume game":
+            print("NOT YET SUPPORTED")
+            # resume game
+        else:
+            typespeed.game.start(config)  # rematch
+        selection = select("Options: ", ["new game", "resume game", "rematch", "exit"])
