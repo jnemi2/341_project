@@ -1,3 +1,4 @@
+import typespeed.words
 
 
 def play(player, mode):
@@ -5,6 +6,7 @@ def play(player, mode):
     :param player: dictionary with player information
     :param mode: string containing game mode
     """
+    #LOGIC
 
 
 def start(config):
@@ -15,4 +17,5 @@ def start(config):
     mode = config['mode']
     for player in config['players']:
         play(player, mode)
+        # LOGIC AFTER EACH TURN
     # EVALUATE WINNER
