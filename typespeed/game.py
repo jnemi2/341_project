@@ -1,6 +1,30 @@
 import typespeed.words
 import typespeed.menu
 import time
+import random
+
+
+def random_word(words):
+    """ Selects a random word
+    :param words: tuple containing 3 lists of words
+    :return: string with one random word
+    """
+    aux = random.randint(1, 12)
+    if len(words[2]) > 0:  # which means the game mode is either hard or typespeed
+        if aux > 6:
+            word = words[2][random.randint(0, len(words[2]))]
+        elif aux > 2:
+            word = words[1][random.randint(0, len(words[1]))]
+        else:
+            word = words[0][random.randint(0, len(words[0]))]
+    elif len(words[1]) > 0:  # which means the game mode is normal
+        if aux > 4:
+            word = words[1][random.randint(0, len(words[1]))]
+        else:
+            word = words[0][random.randint(0, len(words[0]))]
+    else:  # which means the game mode is easy
+        word = words[0][random.randint(0, len(words[0]))]
+    return word
 
 
 def play(player, words, allowed_errors, typing_time, case_insensitive):
@@ -22,6 +46,13 @@ def play(player, words, allowed_errors, typing_time, case_insensitive):
     time.sleep(1.0)
     typespeed.menu.clear()
     # logic
+    errors = 0
+    score = 0
+    while errors < allowed_errors:
+        word = random_word(words)
+        print('\033[1m' + word + '\033[0m', ": " + str(typing_time) + " seconds.")
+        errors += 1
+        # Request player input
 
 
 def play_typespeed(player, words):
