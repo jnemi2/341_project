@@ -447,3 +447,17 @@ def load_hard_words():
     thoroughbred"""
     hard_words = hard_words.split('\n')
     return hard_words
+
+
+def load_words(mode):
+    """ Loads words from words module
+    :param mode: a string specifying the game mode
+    :rtype: tuple
+    :return: a tuple containing 3 lists of loaded words by increasing length
+    """
+    if mode == "hard" or mode == "typespeed":
+        return load_easy_words(), load_normal_words(), load_hard_words()
+    elif mode == "normal":
+        return load_easy_words(), load_normal_words(), []
+    else:
+        return load_easy_words(), [], []
