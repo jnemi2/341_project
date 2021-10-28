@@ -139,9 +139,7 @@ def start():
     while selection != "exit":
         if selection == "new game":
             config_game(config)
-        elif selection == "resume game":
+        else:
             print("NOT YET SUPPORTED")
             # resume game
-        else:
-            typespeed.game.start(config)  # rematch
-        selection = select("Options: ", ["new game", "resume game", "rematch", "exit"])
+        selection = select("Options: ", ["new game", "resume game", "exit"])

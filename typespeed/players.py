@@ -5,7 +5,7 @@ def new_stats():
     :rtype: dictionary
     :return: dictionary with stats
     """
-    return {'score': 0, 'mistakes': 0}
+    return {'score': 0, 'errors': 0}
 
 
 def new_player(name):

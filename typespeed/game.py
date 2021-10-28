@@ -1,7 +1,9 @@
 import typespeed.words
 import typespeed.menu
+import typespeed.players as ply
 import time
 import random
+import datetime
 
 
 def random_word(words):
@@ -12,19 +14,37 @@ def random_word(words):
     aux = random.randint(1, 12)
     if len(words[2]) > 0:  # which means the game mode is either hard or typespeed
         if aux > 6:
-            word = words[2][random.randint(0, len(words[2]))]
+            word = words[2][random.randint(0, len(words[2])-1)]
         elif aux > 2:
-            word = words[1][random.randint(0, len(words[1]))]
+            word = words[1][random.randint(0, len(words[1])-1)]
         else:
-            word = words[0][random.randint(0, len(words[0]))]
+            word = words[0][random.randint(0, len(words[0])-1)]
     elif len(words[1]) > 0:  # which means the game mode is normal
         if aux > 4:
-            word = words[1][random.randint(0, len(words[1]))]
+            word = words[1][random.randint(0, len(words[1])-1)]
         else:
-            word = words[0][random.randint(0, len(words[0]))]
+            word = words[0][random.randint(0, len(words[0])-1)]
     else:  # which means the game mode is easy
-        word = words[0][random.randint(0, len(words[0]))]
+        word = words[0][random.randint(0, len(words[0])-1)]
     return word
+
+
+def detect_input(word, case_insensitive):
+    """ Compares user input with word and generates stats
+    :param word: string to compare
+    :param case_insensitive: boolean indicating whether the comparison is case insensitive
+    :return: dictionary with statistics
+    """
+    stats = {}
+    print('\033[1m' + word + '\033[0m')
+    t0 = datetime.datetime.now()
+    text = input(">>")
+    stats.setdefault('time_diff', datetime.datetime.now() - t0)
+    if case_insensitive:
+        text = text.lower()
+        word = word.lower()
+    stats.setdefault('match', text.strip() == word)
+    return stats
 
 
 def play(player, words, allowed_errors, typing_time, case_insensitive):
@@ -36,8 +56,8 @@ def play(player, words, allowed_errors, typing_time, case_insensitive):
     :param case_insensitive: boolean indicating whether or not to normalize words
     """
     typespeed.menu.clear()
-    print("Are you ready to start " + player['name'] + "?")
-    typespeed.menu.select("Type ok to start", ["ok"], numerate=False)
+    print("You'll have " + str(typing_time) + " seconds to type each word.")
+    typespeed.menu.select("Ready to start " + player['name'] + "?", ["ok"], numerate=False)
     print("Ready")
     time.sleep(1.0)
     print("Set")
@@ -45,14 +65,20 @@ def play(player, words, allowed_errors, typing_time, case_insensitive):
     print("Go!")
     time.sleep(1.0)
     typespeed.menu.clear()
-    # logic
-    errors = 0
-    score = 0
+    # game logic
+    errors = player['stats']['errors']
+    score = player['stats']['score']
     while errors < allowed_errors:
-        word = random_word(words)
-        print('\033[1m' + word + '\033[0m', ": " + str(typing_time) + " seconds.")
-        errors += 1
-        # Request player input
+        word = random_word(words).strip()
+        stats = detect_input(word, case_insensitive)
+        if (not stats['match']) or (stats['time_diff'] > datetime.timedelta(seconds=typing_time)):
+            errors += 1
+            print("Errors: ({}/{})".format(errors, allowed_errors))
+        else:
+            score += len(word)
+            print("Score: {}".format(score))
+    player['stats']['score'] = score
+    player['stats']['errors'] = errors
 
 
 def play_typespeed(player, words):
@@ -77,4 +103,11 @@ def start(config):
     for player in config['players']:
         play(player, words, rules[mode]['errors'], rules[mode]['time'], rules[mode]['case_insensitive'])
         # LOGIC AFTER EACH TURN
-    # EVALUATE WINNER
+        # ask if user wants to save or continue
+    # Winner? find player with the highest score
+    winner = config['players'][0]
+    for i in config['players']:
+        if i['stats']['score'] > winner['stats']['score']:
+            winner = i
+            i['stats'] = ply.new_stats()
+    print("The winner is {}.".format(winner['name']))
