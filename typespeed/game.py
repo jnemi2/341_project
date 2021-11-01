@@ -139,13 +139,17 @@ def play_typespeed(player, words):
     typespeed.menu.clear()
     print("")  # Explanation
     confirm_start(player['name'])
-    errors = 0
-    score = 0
+    word_distance = 0
+    total_time = datetime.timedelta(seconds=0)
+    words_len = 0
     # game logic
     for i in range(15):
         word = random_word(words).strip()
         stats = detect_input(word, case_insensitive=False)
-        # logic
+        word_distance += stats['match']
+        words_len += len(word)
+        total_time = total_time + stats['time_diff']
+    player['score'] = 1000 / ((word_distance / words_len) + total_time.seconds)
 
 
 def start(config):
