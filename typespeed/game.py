@@ -21,6 +21,7 @@ def load():
     """
     file = open("game.pkl", "rb")
     config = pickle.load(file)
+    file.close()
     return config
 
 
