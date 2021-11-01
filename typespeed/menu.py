@@ -143,6 +143,16 @@ def save(config):
     return False
 
 
+def resume():
+    """ Loads the game configuration and resumes the game
+    """
+    try:
+        config = typespeed.game.load()
+        typespeed.game.start(config)
+    except:
+        print("Unable to load file. Please, start a new game.")
+
+
 def start():
     """ Game menu
     """
@@ -152,6 +162,5 @@ def start():
         if selection == "new game":
             config_game(config)
         else:
-            print("NOT YET SUPPORTED")
-            # resume game
+            resume()
         selection = select("Options: ", ["new game", "resume game", "exit"])

@@ -15,6 +15,15 @@ def save(config):
     file.close()
 
 
+def load():
+    """ Loads the game configuration
+    :return: dictionary with game configuration
+    """
+    file = open("game.pkl", "rb")
+    config = pickle.load(file)
+    return config
+
+
 def random_word(words):
     """ Selects a random word
     :param words: tuple containing 3 lists of words
@@ -182,14 +191,15 @@ def start(config):
     mode = config['mode']
     words = typespeed.words.load_words(mode)
     for player in config['players']:
-        if mode != "typespeed":
-            play(player, words, rules[mode]['errors'], rules[mode]['time'], rules[mode]['case_insensitive'])
-        else:
-            play_typespeed(player, words)
-        # LOGIC AFTER EACH TURN
-        saved = typespeed.menu.save(config)
-        if saved:
-            break
+        if player['stats']['errors'] == 0:
+            if mode != "typespeed":
+                play(player, words, rules[mode]['errors'], rules[mode]['time'], rules[mode]['case_insensitive'])
+            else:
+                play_typespeed(player, words)
+            # LOGIC AFTER EACH TURN
+            saved = typespeed.menu.save(config)
+            if saved:
+                break
     typespeed.menu.clear()
     print()
     if not saved:
