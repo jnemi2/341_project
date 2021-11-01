@@ -124,8 +124,8 @@ def play(player, words, allowed_errors, typing_time, case_insensitive):
     print("You'll have " + str(typing_time) + " seconds to type each word.")
     confirm_start(player['name'])
     # game logic
-    errors = player['stats']['errors']
-    score = player['stats']['score']
+    errors = 0
+    score = 0
     while errors < allowed_errors:
         word = random_word(words).strip()
         stats = detect_input(word, case_insensitive)
