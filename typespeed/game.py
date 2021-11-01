@@ -47,6 +47,20 @@ def detect_input(word, case_insensitive):
     return stats
 
 
+def confirm_start(name):
+    """ Asks for confirmation to start
+    :param name: name of player
+    """
+    typespeed.menu.select("Ready to start " + name + "?", ["ok"], numerate=False)
+    print("Ready")
+    time.sleep(1.0)
+    print("Set")
+    time.sleep(1.0)
+    print("Go!")
+    time.sleep(1.0)
+    typespeed.menu.clear()
+
+
 def play(player, words, allowed_errors, typing_time, case_insensitive):
     """ Handles the logic behind each player's turn for the first game mode
     :param player: dictionary with player information
@@ -57,14 +71,7 @@ def play(player, words, allowed_errors, typing_time, case_insensitive):
     """
     typespeed.menu.clear()
     print("You'll have " + str(typing_time) + " seconds to type each word.")
-    typespeed.menu.select("Ready to start " + player['name'] + "?", ["ok"], numerate=False)
-    print("Ready")
-    time.sleep(1.0)
-    print("Set")
-    time.sleep(1.0)
-    print("Go!")
-    time.sleep(1.0)
-    typespeed.menu.clear()
+    confirm_start(player['name'])
     # game logic
     errors = player['stats']['errors']
     score = player['stats']['score']
@@ -110,4 +117,5 @@ def start(config):
         if i['stats']['score'] > winner['stats']['score']:
             winner = i
             i['stats'] = ply.new_stats()
+    typespeed.menu.clear()
     print("The winner is {}.".format(winner['name']))
