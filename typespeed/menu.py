@@ -131,6 +131,18 @@ def config_game(config):
         selection = select("Options: ", ["start", "edit players", "back"])
 
 
+def save(config):
+    """ Asks the users if they'd like to save the game after each turn
+    :param config: dictionary with the game configuration
+    :return: boolean indicating whether the game was saved
+    """
+    selection = select("Would you like to save the game?", ["yes", "no"])
+    if selection == "yes":
+        typespeed.game.save(config)
+        return True
+    return False
+
+
 def start():
     """ Game menu
     """

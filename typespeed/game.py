@@ -1,9 +1,18 @@
 import typespeed.words
 import typespeed.menu
-import typespeed.players as ply
 import time
 import random
 import datetime
+import pickle
+
+
+def save(config):
+    """ Saves the game configuration
+    :param config: dictionary with game configuration
+    """
+    file = open("game.pkl", "wb")
+    pickle.dump(config, file)
+    file.close()
 
 
 def random_word(words):
@@ -169,15 +178,19 @@ def start(config):
     rules = {'easy': {'time': 5, 'errors': 5, 'case_insensitive': True},
              'normal': {'time': 5, 'errors': 3, 'case_insensitive': True},
              'hard': {'time': 5, 'errors': 3, 'case_insensitive': False}}
-    print("Started game " + config['mode'])  # REMOVE
     mode = config['mode']
     words = typespeed.words.load_words(mode)
     for player in config['players']:
         if mode != "typespeed":
             play(player, words, rules[mode]['errors'], rules[mode]['time'], rules[mode]['case_insensitive'])
-            # LOGIC AFTER EACH TURN
-            # ask if user wants to save or continue
         else:
             play_typespeed(player, words)
+        # LOGIC AFTER EACH TURN
+        saved = typespeed.menu.save(config)
+        if saved:
+            break
     typespeed.menu.clear()
-    show_ranking(config['players'])
+    print()
+    if not saved:
+        show_ranking(config['players'])
+    print()
