@@ -149,7 +149,17 @@ def play_typespeed(player, words):
         word_distance += stats['match']
         words_len += len(word)
         total_time = total_time + stats['time_diff']
-    player['score'] = 1000 / ((word_distance / words_len) + total_time.seconds)
+    player['stats']['score'] = 100 / ((word_distance / words_len) + (total_time.seconds / words_len))
+
+
+def show_ranking(players):
+    """ Displays the list of players sorted by score
+    :param players: list of players
+    """
+    aux = players[:]
+    aux.sort(key=lambda x: int(round(x['stats']['score'])), reverse=True)
+    for p in range(len(aux)):
+        print("{}º {} ({})".format(p+1, aux[p]['name'], round(aux[p]['stats']['score'], 2) ))
 
 
 def start(config):
@@ -163,14 +173,11 @@ def start(config):
     mode = config['mode']
     words = typespeed.words.load_words(mode)
     for player in config['players']:
-        play(player, words, rules[mode]['errors'], rules[mode]['time'], rules[mode]['case_insensitive'])
-        # LOGIC AFTER EACH TURN
-        # ask if user wants to save or continue
-    # Winner? find player with the highest score
-    winner = config['players'][0]
-    for i in config['players']:
-        if i['stats']['score'] > winner['stats']['score']:
-            winner = i
-            i['stats'] = ply.new_stats()
+        if mode != "typespeed":
+            play(player, words, rules[mode]['errors'], rules[mode]['time'], rules[mode]['case_insensitive'])
+            # LOGIC AFTER EACH TURN
+            # ask if user wants to save or continue
+        else:
+            play_typespeed(player, words)
     typespeed.menu.clear()
-    print("The winner is {}.".format(winner['name']))
+    show_ranking(config['players'])
