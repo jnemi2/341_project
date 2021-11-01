@@ -159,6 +159,7 @@ def play_typespeed(player, words):
         words_len += len(word)
         total_time = total_time + stats['time_diff']
     player['stats']['score'] = 100 / ((word_distance / words_len) + (total_time.seconds / words_len))
+    player['stats']['errors'] = 1  # this will be used as an indicator
 
 
 def show_ranking(players):
