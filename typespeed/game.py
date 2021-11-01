@@ -94,7 +94,16 @@ def play_typespeed(player, words):
     :param words:
     :return:
     """
-    # logic
+    typespeed.menu.clear()
+    print("")  # Explanation
+    confirm_start(player['name'])
+    errors = 0
+    score = 0
+    # game logic
+    for i in range(15):
+        word = random_word(words).strip()
+        stats = detect_input(word, case_insensitive=False)
+        # logic
 
 
 def start(config):
