@@ -22,6 +22,3 @@ def simulate(word, accuracy):
             print(c, end="", flush=True)
             time.sleep(0.2)
         print("")
-
-
-simulate("Hello there!", 0.95)
