@@ -11,14 +11,17 @@ def simulate(word, accuracy):
     if accuracy > rnd:
         # correct
         for c in word:
-            print(c, end="")
-            time.sleep(0.25)
+            print(c, end="", flush=True)
+            time.sleep(0.2)
         print("")
     else:
         # incorrect
         mistake = random.randint(len(word)-1)
         word = word[:mistake-1] + word[mistake:]
         for c in word:
-            print(c, end="")
-            time.sleep(0.25)
+            print(c, end="", flush=True)
+            time.sleep(0.2)
         print("")
+
+
+simulate("Hello there!", 0.95)
