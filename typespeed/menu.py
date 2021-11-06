@@ -138,7 +138,7 @@ def save(config):
     """
     selection = select("Would you like to save the game?", ["yes", "no"])
     if selection == "yes":
-        typespeed.game.save(config)
+        typespeed.game.save(config, "game.pkl")
         return True
     return False
 
@@ -147,7 +147,7 @@ def resume():
     """ Loads the game configuration and resumes the game
     """
     try:
-        config = typespeed.game.load()
+        config = typespeed.game.load("game.pkl")
         typespeed.game.start(config)
     except:
         print("Unable to load file. Please, start a new game.")

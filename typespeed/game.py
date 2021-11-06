@@ -6,23 +6,25 @@ import datetime
 import pickle
 
 
-def save(config):
+def save(obj, file_name):
     """ Saves the game configuration
-    :param config: dictionary with game configuration
+    :param obj: object to save in binary file with pickle
+    :param file_name: str indicating filename including .pkl extension
     """
-    file = open("game.pkl", "wb")
-    pickle.dump(config, file)
+    file = open(file_name, "wb")
+    pickle.dump(obj, file)
     file.close()
 
 
-def load():
+def load(file_name):
     """ Loads the game configuration
+    :param file_name: str indicating filename including .pkl extension
     :return: dictionary with game configuration
     """
-    file = open("game.pkl", "rb")
-    config = pickle.load(file)
+    file = open(file_name, "rb")
+    obj = pickle.load(file)
     file.close()
-    return config
+    return obj
 
 
 def random_word(words):
