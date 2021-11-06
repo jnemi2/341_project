@@ -1,5 +1,7 @@
 import typespeed.words
 import typespeed.menu
+import typespeed.players as ply
+import typespeed.bot
 import time
 import random
 import datetime
@@ -73,16 +75,21 @@ def levenshtein_distance(first_word: str, second_word: str) -> int:
     return previous_row[-1]
 
 
-def detect_input(word, case_insensitive):
+def detect_input(word, case_insensitive, simulate=False, accuracy=1.0):
     """ Compares user input with word and generates stats
     :param word: string to compare
     :param case_insensitive: boolean indicating whether the comparison is case insensitive
+    :param simulate: simulates an input with a certain accuracy
+    :param accuracy: typing accuracy of simulation
     :return: dictionary with statistics
     """
     stats = {}
     display(word, bold=True)
     t0 = datetime.datetime.now()
-    text = request()
+    if not simulate:
+        text = request()
+    else:
+        text = typespeed.bot.simulate(word, accuracy)
     stats.setdefault('time_diff', datetime.datetime.now() - t0)
     if case_insensitive:
         text = text.lower()
@@ -119,7 +126,10 @@ def play(player, words, rules):
     score = 0
     while errors < rules['errors']:
         word = random_word(words).strip()
-        stats = detect_input(word, rules['case_insensitive'])
+        if player['type'] == "bot":
+            stats = detect_input(word, rules['case_insensitive'], simulate=True, accuracy=player['accuracy'])
+        else:
+            stats = detect_input(word, rules['case_insensitive'])
         if (stats['match'] != 0) or (stats['time_diff'] > datetime.timedelta(seconds=rules['time'])):
             errors += 1
             display("Errors: ({}/{})".format(errors, rules['errors']))
@@ -145,7 +155,10 @@ def play_typespeed(player, words):
     # game logic
     for i in range(15):
         word = random_word(words).strip()
-        stats = detect_input(word, case_insensitive=False)
+        if player['type'] == "bot":
+            stats = detect_input(word, case_insensitive=False, simulate=True, accuracy=player['accuracy'])
+        else:
+            stats = detect_input(word, case_insensitive=False)
         word_distance += stats['match']
         words_len += len(word)
         total_time = total_time + stats['time_diff']
@@ -185,3 +198,5 @@ def start(config):
     if not saved:
         show_ranking(config['players'])
     display("")
+    for player in config['players']:
+        player['stats'] = ply.new_stats()
