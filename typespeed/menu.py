@@ -139,9 +139,10 @@ def resume():
     """
     try:
         config = frontend.filemanager.load_pkl("game.pkl")
-        typespeed.game.start(config)
     except:
         display("Unable to load file. Please, start a new game.")
+    else:
+        typespeed.game.start(config)
 
 
 def start():
