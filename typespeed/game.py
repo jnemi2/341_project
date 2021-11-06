@@ -5,7 +5,7 @@ import random
 import datetime
 import pickle
 
-import view.view
+from view.view import clear, display
 
 
 def save(obj, file_name):
@@ -101,7 +101,7 @@ def detect_input(word, case_insensitive):
     :return: dictionary with statistics
     """
     stats = {}
-    print('\033[1m' + word + '\033[0m')
+    display(word, bold=True)
     t0 = datetime.datetime.now()
     text = input(">>")
     stats.setdefault('time_diff', datetime.datetime.now() - t0)
@@ -117,13 +117,13 @@ def confirm_start(name):
     :param name: name of player
     """
     typespeed.menu.select("Ready to start " + name + "?", ["ok"], numerate=False)
-    print("Ready")
+    display("Ready")
     time.sleep(1.0)
-    print("Set")
+    display("Set")
     time.sleep(1.0)
-    print("Go!")
+    display("Go!")
     time.sleep(1.0)
-    view.view.clear()
+    clear()
 
 
 def play(player, words, allowed_errors, typing_time, case_insensitive):
@@ -134,7 +134,7 @@ def play(player, words, allowed_errors, typing_time, case_insensitive):
     :param typing_time: int indicating max time (in seconds) per word
     :param case_insensitive: boolean indicating whether or not to normalize words
     """
-    view.view.clear()
+    clear()
     print("You'll have " + str(typing_time) + " seconds to type each word.")
     confirm_start(player['name'])
     # game logic
@@ -145,10 +145,10 @@ def play(player, words, allowed_errors, typing_time, case_insensitive):
         stats = detect_input(word, case_insensitive)
         if (stats['match'] != 0) or (stats['time_diff'] > datetime.timedelta(seconds=typing_time)):
             errors += 1
-            print("Errors: ({}/{})".format(errors, allowed_errors))
+            display("Errors: ({}/{})".format(errors, allowed_errors))
         else:
             score += len(word)
-            print("Score: {}".format(score))
+            display("Score: {}".format(score))
     player['stats']['score'] = score
     player['stats']['errors'] = errors
 
@@ -159,8 +159,8 @@ def play_typespeed(player, words):
     :param words:
     :return:
     """
-    view.view.clear()
-    print("")  # Explanation
+    clear()
+    display("")  # Explanation
     confirm_start(player['name'])
     word_distance = 0
     total_time = datetime.timedelta(seconds=0)
@@ -183,7 +183,7 @@ def show_ranking(players):
     aux = players[:]
     aux.sort(key=lambda x: int(round(x['stats']['score'])), reverse=True)
     for p in range(len(aux)):
-        print("{}º {} ({})".format(p+1, aux[p]['name'], round(aux[p]['stats']['score'], 2) ))
+        display("{}º {} ({})".format(p+1, aux[p]['name'], round(aux[p]['stats']['score'], 2)))
 
 
 def start(config):
@@ -205,8 +205,8 @@ def start(config):
             saved = typespeed.menu.save(config)
             if saved:
                 break
-    view.view.clear()
-    print()
+    clear()
+    display("")
     if not saved:
         show_ranking(config['players'])
-    print()
+    display("")

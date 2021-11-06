@@ -1,5 +1,6 @@
 import time
 import random
+from view.view import display
 
 
 def simulate(word, accuracy):
@@ -12,15 +13,15 @@ def simulate(word, accuracy):
     if accuracy > rnd:
         # simulate correct input
         for c in word:
-            print(c, end="", flush=True)
+            display(c, end="", flush=True)
             time.sleep(0.2)
-        print("")
+        display("")
     else:
         # simulate incorrect input
         mistake = random.randint(len(word)-1)
         word = word[:mistake-1] + word[mistake:]
         for c in word:
-            print(c, end="", flush=True)
+            display(c, end="", flush=True)
             time.sleep(0.2)
-        print("")
+        display("")
     return word

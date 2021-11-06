@@ -1,6 +1,6 @@
 import typespeed.players as ply
 import typespeed.game
-from view.view import clear
+from view.view import clear, display
 
 max_players = 4
 min_players = 2
@@ -14,16 +14,16 @@ def select(message, options, numerate=True):
                      if False, the validation will match a the user's input with an option
     :return: A string matching an option in 'options'
     """
-    print(message)
+    display(message)
     n_options = []
     # displaying options
     if numerate:
         for i in range(len(options)):
-            print(str(i+1) + "- " + options[i])
+            display(str(i+1) + "- " + options[i])
             n_options.append(str(i+1))
     else:
         for i in options:
-            print("- " + i)
+            display("- " + i)
     selection = input(">>").strip().lower()
     # validation
     while selection not in options and (not numerate or (selection not in n_options)):
@@ -55,7 +55,7 @@ def add_player(players):
                 bot_accuracy = 0.85
             players.append(ply.new_bot(name, bot_accuracy))
     else:
-        print("The maximum number of players has been reached.\n")
+        display("The maximum number of players has been reached.\n")
 
 
 def display_players(players):
@@ -63,8 +63,8 @@ def display_players(players):
     :param players: list of players to display
     """
     for i in range(len(players)):
-        print(str(i+1) + "- " + ply.format_player(players[i]))
-    print("\n")
+        display(str(i+1) + "- " + ply.format_player(players[i]))
+    display("\n")
 
 
 def remove_player(players):
@@ -77,11 +77,11 @@ def remove_player(players):
         try:
             players.pop(int(to_remove) - 1)
         except:
-            print("Unable to remove player number " + to_remove + ".\n")
+            display("Unable to remove player number " + to_remove + ".\n")
         else:
-            print("Player removed successfully.\n")
+            display("Player removed successfully.\n")
     else:
-        print("There are no players.\n")
+        display("There are no players.\n")
 
 
 def edit_players(players):
@@ -113,7 +113,7 @@ def config_game(config):
             edit_players(config['players'])
         else:
             if len(config['players']) < min_players:
-                print("You cannot play with less than " + str(min_players) + " players.")
+                display("You cannot play with less than " + str(min_players) + " players.")
             else:
                 config['mode'] = select("Select a game mode:", ["easy", "normal", "hard", "typespeed"])
                 typespeed.game.start(config)
@@ -140,7 +140,7 @@ def resume():
         config = typespeed.game.load("game.pkl")
         typespeed.game.start(config)
     except:
-        print("Unable to load file. Please, start a new game.")
+        display("Unable to load file. Please, start a new game.")
 
 
 def start():
