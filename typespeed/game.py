@@ -5,7 +5,7 @@ import random
 import datetime
 
 from frontend.filemanager import load_pkl
-from frontend.view import clear, display
+from frontend.view import clear, display, request
 
 
 def random_word(words):
@@ -82,7 +82,7 @@ def detect_input(word, case_insensitive):
     stats = {}
     display(word, bold=True)
     t0 = datetime.datetime.now()
-    text = input(">>")
+    text = request()
     stats.setdefault('time_diff', datetime.datetime.now() - t0)
     if case_insensitive:
         text = text.lower()
@@ -112,7 +112,7 @@ def play(player, words, rules):
     :param rules: dict with rules for the specified game mode
     """
     clear()
-    print("You'll have " + str(rules['time']) + " seconds to type each word.")
+    display("You'll have " + str(rules['time']) + " seconds to type each word.")
     confirm_start(player['name'])
     # game logic
     errors = 0

@@ -1,7 +1,7 @@
 import frontend.filemanager
 import typespeed.players as ply
 import typespeed.game
-from frontend.view import clear, display
+from frontend.view import clear, display, request
 
 max_players = 4
 min_players = 2
@@ -25,7 +25,7 @@ def select(message, options, numerate=True):
     else:
         for i in options:
             display("- " + i)
-    selection = input(">>").strip().lower()
+    selection = request().strip().lower()
     # validation
     while selection not in options and (not numerate or (selection not in n_options)):
         selection = input("Please, enter a valid option>>").strip().lower()

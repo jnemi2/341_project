@@ -21,3 +21,10 @@ def display(message, end="\n", flush=False, bold=False):
     if bold:
         message = '\033[1m' + message + '\033[0m'
     print(message, end=end, flush=flush)
+
+
+def request():
+    """ Requests an action from the user
+    :return: str with information received by the user
+    """
+    return input(">>")
