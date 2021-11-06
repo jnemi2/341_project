@@ -188,16 +188,19 @@ def start(config):
     rules = load_pkl('params.pkl')
     mode = config['mode']
     words = typespeed.words.load_words(mode)
-    for player in config['players']:
+    for i in range(len(config['players'])):
+        player = config['players'][i]
         if player['stats']['errors'] == 0:
             if mode != "typespeed":
                 play(player, words, rules[mode])
             else:
                 play_typespeed(player, words)
             # LOGIC AFTER EACH TURN
-            saved = typespeed.menu.save(config)
-            if saved:
-                break
+            saved = False
+            if i < len(config['players'])-1:
+                saved = typespeed.menu.save(config)
+                if saved:
+                    break
     clear()
     display("")
     if not saved:
