@@ -119,7 +119,12 @@ def play(player, words, rules):
     :param rules: dict with rules for the specified game mode
     """
     clear()
-    display("You'll have " + str(rules['time']) + " seconds to type each word.")
+    message = "You'll have " + str(rules['time']) + " seconds to type each word. Case "
+    if rules['case_insensitive']:
+        message = message + "insensitive."
+    else:
+        message = message + "sensitive."
+    display(message, bold=True)
     confirm_start(player['name'])
     # game logic
     errors = 0
@@ -147,7 +152,7 @@ def play_typespeed(player, words):
     :return:
     """
     clear()
-    display("")  # Explanation
+    display("You will be shown 15 words that you will need to type in the shortest possible time.", bold=True)  # Explanation
     confirm_start(player['name'])
     word_distance = 0
     total_time = datetime.timedelta(seconds=0)
