@@ -1,6 +1,6 @@
 import time
 import random
-from view.view import display
+from frontend.view import display
 
 
 def simulate(word, accuracy):

@@ -3,30 +3,9 @@ import typespeed.menu
 import time
 import random
 import datetime
-import pickle
 
-from view.view import clear, display
-
-
-def save(obj, file_name):
-    """ Saves the game configuration
-    :param obj: object to save in binary file with pickle
-    :param file_name: str indicating filename including .pkl extension
-    """
-    file = open(file_name, "wb")
-    pickle.dump(obj, file)
-    file.close()
-
-
-def load(file_name):
-    """ Loads the game configuration
-    :param file_name: str indicating filename including .pkl extension
-    :return: dictionary with game configuration
-    """
-    file = open(file_name, "rb")
-    obj = pickle.load(file)
-    file.close()
-    return obj
+from frontend.filemanager import load_pkl
+from frontend.view import clear, display
 
 
 def random_word(words):
@@ -188,7 +167,7 @@ def start(config):
     """ Starts a game with the specified configuration
     :param config: dictionary with game configuration
     """
-    rules = load('params.pkl')
+    rules = load_pkl('params.pkl')
     mode = config['mode']
     words = typespeed.words.load_words(mode)
     for player in config['players']:

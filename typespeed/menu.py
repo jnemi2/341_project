@@ -1,6 +1,7 @@
+import frontend.filemanager
 import typespeed.players as ply
 import typespeed.game
-from view.view import clear, display
+from frontend.view import clear, display
 
 max_players = 4
 min_players = 2
@@ -128,7 +129,7 @@ def save(config):
     """
     selection = select("Would you like to save the game?", ["yes", "no"])
     if selection == "yes":
-        typespeed.game.save(config, "game.pkl")
+        frontend.filemanager.save_pkl(config, "game.pkl")
         return True
     return False
 
@@ -137,7 +138,7 @@ def resume():
     """ Loads the game configuration and resumes the game
     """
     try:
-        config = typespeed.game.load("game.pkl")
+        config = frontend.filemanager.load_pkl("game.pkl")
         typespeed.game.start(config)
     except:
         display("Unable to load file. Please, start a new game.")
