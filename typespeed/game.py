@@ -126,26 +126,24 @@ def confirm_start(name):
     clear()
 
 
-def play(player, words, allowed_errors, typing_time, case_insensitive):
+def play(player, words, rules):
     """ Handles the logic behind each player's turn for the first game mode
     :param player: dictionary with player information
     :param words: tuple containing lists of loaded words
-    :param allowed_errors: int indicating max errors allowed
-    :param typing_time: int indicating max time (in seconds) per word
-    :param case_insensitive: boolean indicating whether or not to normalize words
+    :param rules: dict with rules for the specified game mode
     """
     clear()
-    print("You'll have " + str(typing_time) + " seconds to type each word.")
+    print("You'll have " + str(rules['time']) + " seconds to type each word.")
     confirm_start(player['name'])
     # game logic
     errors = 0
     score = 0
-    while errors < allowed_errors:
+    while errors < rules[errors]:
         word = random_word(words).strip()
-        stats = detect_input(word, case_insensitive)
-        if (stats['match'] != 0) or (stats['time_diff'] > datetime.timedelta(seconds=typing_time)):
+        stats = detect_input(word, rules['case_insensitive'])
+        if (stats['match'] != 0) or (stats['time_diff'] > datetime.timedelta(seconds=rules['time'])):
             errors += 1
-            display("Errors: ({}/{})".format(errors, allowed_errors))
+            display("Errors: ({}/{})".format(errors, rules['errors']))
         else:
             score += len(word)
             display("Score: {}".format(score))
@@ -198,7 +196,7 @@ def start(config):
     for player in config['players']:
         if player['stats']['errors'] == 0:
             if mode != "typespeed":
-                play(player, words, rules[mode]['errors'], rules[mode]['time'], rules[mode]['case_insensitive'])
+                play(player, words, rules[mode])
             else:
                 play_typespeed(player, words)
             # LOGIC AFTER EACH TURN
