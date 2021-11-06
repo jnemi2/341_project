@@ -18,7 +18,7 @@ def simulate(word, accuracy):
         display("")
     else:
         # simulate incorrect input
-        mistake = random.randint(len(word)-1)
+        mistake = random.randint(0, len(word)-1)
         word = word[:mistake-1] + word[mistake:]
         for c in word:
             display(c, end="", flush=True)
