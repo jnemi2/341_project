@@ -1,28 +1,13 @@
 import typespeed.words
 import typespeed.menu
+import typespeed.players as ply
+import typespeed.bot
 import time
 import random
 import datetime
-import pickle
 
-
-def save(config):
-    """ Saves the game configuration
-    :param config: dictionary with game configuration
-    """
-    file = open("game.pkl", "wb")
-    pickle.dump(config, file)
-    file.close()
-
-
-def load():
-    """ Loads the game configuration
-    :return: dictionary with game configuration
-    """
-    file = open("game.pkl", "rb")
-    config = pickle.load(file)
-    file.close()
-    return config
+from frontend.filemanager import load_pkl
+from frontend.view import clear, display, request
 
 
 def random_word(words):
@@ -90,16 +75,21 @@ def levenshtein_distance(first_word: str, second_word: str) -> int:
     return previous_row[-1]
 
 
-def detect_input(word, case_insensitive):
+def detect_input(word, case_insensitive, simulate=False, accuracy=1.0):
     """ Compares user input with word and generates stats
     :param word: string to compare
     :param case_insensitive: boolean indicating whether the comparison is case insensitive
+    :param simulate: simulates an input with a certain accuracy
+    :param accuracy: typing accuracy of simulation
     :return: dictionary with statistics
     """
     stats = {}
-    print('\033[1m' + word + '\033[0m')
+    display(word, bold=True)
     t0 = datetime.datetime.now()
-    text = input(">>")
+    if not simulate:
+        text = request()
+    else:
+        text = typespeed.bot.simulate(word, accuracy)
     stats.setdefault('time_diff', datetime.datetime.now() - t0)
     if case_insensitive:
         text = text.lower()
@@ -113,38 +103,44 @@ def confirm_start(name):
     :param name: name of player
     """
     typespeed.menu.select("Ready to start " + name + "?", ["ok"], numerate=False)
-    print("Ready")
+    display("Ready")
     time.sleep(1.0)
-    print("Set")
+    display("Set")
     time.sleep(1.0)
-    print("Go!")
+    display("Go!")
     time.sleep(1.0)
-    typespeed.menu.clear()
+    clear()
 
 
-def play(player, words, allowed_errors, typing_time, case_insensitive):
+def play(player, words, rules):
     """ Handles the logic behind each player's turn for the first game mode
     :param player: dictionary with player information
     :param words: tuple containing lists of loaded words
-    :param allowed_errors: int indicating max errors allowed
-    :param typing_time: int indicating max time (in seconds) per word
-    :param case_insensitive: boolean indicating whether or not to normalize words
+    :param rules: dict with rules for the specified game mode
     """
-    typespeed.menu.clear()
-    print("You'll have " + str(typing_time) + " seconds to type each word.")
+    clear()
+    message = "You'll have " + str(rules['time']) + " seconds to type each word. Case "
+    if rules['case_insensitive']:
+        message = message + "insensitive."
+    else:
+        message = message + "sensitive."
+    display(message, bold=True)
     confirm_start(player['name'])
     # game logic
     errors = 0
     score = 0
-    while errors < allowed_errors:
+    while errors < rules['errors']:
         word = random_word(words).strip()
-        stats = detect_input(word, case_insensitive)
-        if (stats['match'] != 0) or (stats['time_diff'] > datetime.timedelta(seconds=typing_time)):
+        if player['type'] == "bot":
+            stats = detect_input(word, rules['case_insensitive'], simulate=True, accuracy=player['accuracy'])
+        else:
+            stats = detect_input(word, rules['case_insensitive'])
+        if (stats['match'] != 0) or (stats['time_diff'] > datetime.timedelta(seconds=rules['time'])):
             errors += 1
-            print("Errors: ({}/{})".format(errors, allowed_errors))
+            display("Errors: ({}/{})".format(errors, rules['errors']))
         else:
             score += len(word)
-            print("Score: {}".format(score))
+            display("Score: {}".format(score))
     player['stats']['score'] = score
     player['stats']['errors'] = errors
 
@@ -155,8 +151,8 @@ def play_typespeed(player, words):
     :param words:
     :return:
     """
-    typespeed.menu.clear()
-    print("")  # Explanation
+    clear()
+    display("You will be shown 15 words that you will need to type in the shortest possible time.", bold=True)  # Explanation
     confirm_start(player['name'])
     word_distance = 0
     total_time = datetime.timedelta(seconds=0)
@@ -164,7 +160,10 @@ def play_typespeed(player, words):
     # game logic
     for i in range(15):
         word = random_word(words).strip()
-        stats = detect_input(word, case_insensitive=False)
+        if player['type'] == "bot":
+            stats = detect_input(word, case_insensitive=False, simulate=True, accuracy=player['accuracy'])
+        else:
+            stats = detect_input(word, case_insensitive=False)
         word_distance += stats['match']
         words_len += len(word)
         total_time = total_time + stats['time_diff']
@@ -179,30 +178,33 @@ def show_ranking(players):
     aux = players[:]
     aux.sort(key=lambda x: int(round(x['stats']['score'])), reverse=True)
     for p in range(len(aux)):
-        print("{}º {} ({})".format(p+1, aux[p]['name'], round(aux[p]['stats']['score'], 2) ))
+        display("{}º {} ({})".format(p+1, aux[p]['name'], round(aux[p]['stats']['score'], 2)))
 
 
 def start(config):
     """ Starts a game with the specified configuration
     :param config: dictionary with game configuration
     """
-    rules = {'easy': {'time': 5, 'errors': 5, 'case_insensitive': True},
-             'normal': {'time': 5, 'errors': 3, 'case_insensitive': True},
-             'hard': {'time': 5, 'errors': 3, 'case_insensitive': False}}
+    rules = load_pkl('params.pkl')
     mode = config['mode']
     words = typespeed.words.load_words(mode)
-    for player in config['players']:
+    for i in range(len(config['players'])):
+        player = config['players'][i]
         if player['stats']['errors'] == 0:
             if mode != "typespeed":
-                play(player, words, rules[mode]['errors'], rules[mode]['time'], rules[mode]['case_insensitive'])
+                play(player, words, rules[mode])
             else:
                 play_typespeed(player, words)
             # LOGIC AFTER EACH TURN
-            saved = typespeed.menu.save(config)
-            if saved:
-                break
-    typespeed.menu.clear()
-    print()
+            saved = False
+            if i < len(config['players'])-1:
+                saved = typespeed.menu.save(config)
+                if saved:
+                    break
+    clear()
+    display("")
     if not saved:
         show_ranking(config['players'])
-    print()
+    display("")
+    for player in config['players']:
+        player['stats'] = ply.new_stats()

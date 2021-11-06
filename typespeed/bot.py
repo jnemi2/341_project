@@ -1,24 +1,27 @@
 import time
 import random
+from frontend.view import display
 
 
 def simulate(word, accuracy):
     """ Handles the logic behind the bots
     :param word: string to be typed by the bot
     :param accuracy: float indicating the bot's accuracy
+    :return: word written with or without mistake
     """
     rnd = random.uniform(0, 1)
     if accuracy > rnd:
-        # correct
+        # simulate correct input
         for c in word:
-            print(c, end="")
-            time.sleep(0.25)
-        print("")
+            display(c, end="", flush=True)
+            time.sleep(0.2)
+        display("")
     else:
-        # incorrect
-        mistake = random.randint(len(word)-1)
+        # simulate incorrect input
+        mistake = random.randint(0, len(word)-1)
         word = word[:mistake-1] + word[mistake:]
         for c in word:
-            print(c, end="")
-            time.sleep(0.25)
-        print("")
+            display(c, end="", flush=True)
+            time.sleep(0.2)
+        display("")
+    return word
