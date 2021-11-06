@@ -1,19 +1,9 @@
-import os
 import typespeed.players as ply
 import typespeed.game
+from view.view import clear
 
 max_players = 4
 min_players = 2
-
-
-def clear():
-    """ Clears console
-    :return:
-    """
-    if os.name == 'nt':
-        os.system('cls')
-    else:
-        os.system('clear')
 
 
 def select(message, options, numerate=True):

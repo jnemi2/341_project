@@ -5,6 +5,8 @@ import random
 import datetime
 import pickle
 
+import view.view
+
 
 def save(obj, file_name):
     """ Saves the game configuration
@@ -121,7 +123,7 @@ def confirm_start(name):
     time.sleep(1.0)
     print("Go!")
     time.sleep(1.0)
-    typespeed.menu.clear()
+    view.view.clear()
 
 
 def play(player, words, allowed_errors, typing_time, case_insensitive):
@@ -132,7 +134,7 @@ def play(player, words, allowed_errors, typing_time, case_insensitive):
     :param typing_time: int indicating max time (in seconds) per word
     :param case_insensitive: boolean indicating whether or not to normalize words
     """
-    typespeed.menu.clear()
+    view.view.clear()
     print("You'll have " + str(typing_time) + " seconds to type each word.")
     confirm_start(player['name'])
     # game logic
@@ -157,7 +159,7 @@ def play_typespeed(player, words):
     :param words:
     :return:
     """
-    typespeed.menu.clear()
+    view.view.clear()
     print("")  # Explanation
     confirm_start(player['name'])
     word_distance = 0
@@ -203,7 +205,7 @@ def start(config):
             saved = typespeed.menu.save(config)
             if saved:
                 break
-    typespeed.menu.clear()
+    view.view.clear()
     print()
     if not saved:
         show_ranking(config['players'])
