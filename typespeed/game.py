@@ -138,7 +138,7 @@ def play(player, words, rules):
     # game logic
     errors = 0
     score = 0
-    while errors < rules[errors]:
+    while errors < rules['errors']:
         word = random_word(words).strip()
         stats = detect_input(word, rules['case_insensitive'])
         if (stats['match'] != 0) or (stats['time_diff'] > datetime.timedelta(seconds=rules['time'])):
@@ -188,9 +188,7 @@ def start(config):
     """ Starts a game with the specified configuration
     :param config: dictionary with game configuration
     """
-    rules = {'easy': {'time': 5, 'errors': 5, 'case_insensitive': True},
-             'normal': {'time': 5, 'errors': 3, 'case_insensitive': True},
-             'hard': {'time': 5, 'errors': 3, 'case_insensitive': False}}
+    rules = load('params.pkl')
     mode = config['mode']
     words = typespeed.words.load_words(mode)
     for player in config['players']:
