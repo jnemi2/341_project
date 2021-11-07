@@ -1,4 +1,4 @@
-import frontend.filemanager as fm
+import view.filemanager as fm
 
 
 def load_words(mode):

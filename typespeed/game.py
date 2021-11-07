@@ -6,8 +6,8 @@ import time
 import random
 import datetime
 
-from frontend.filemanager import load_pkl
-from frontend.view import clear, display, request
+from view.filemanager import load_pkl
+from view.view import clear, display, request
 
 
 def random_word(words):
