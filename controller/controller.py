@@ -7,11 +7,42 @@ Status = Enum('Status', 'active requested inactive')
 
 
 def initiate():
+    """ Initiates the components of the MVC
+    """
     context.initiate()
     context.controller.setdefault('status', Status.active)
     model.initiate()
     view.initiate()
 
 
-def test():
-    print("stat model:", model.stat)
+def start():
+    """ Starts the controller module
+    """
+    # start code goes here
+
+    # starts a loop until controller is deactivated
+    while context.controller['status'] != Status.inactive:
+        update()
+
+
+def update():
+    """ This code is executed in a loop until the status of controller is set to inactive
+    """
+    trigger(view.get_key())
+
+
+def trigger(key):
+    """ Handles the actions triggered by the keyboard
+    :param key: str code of key pressed
+    """
+    if key != '':
+        if key.lower() in "abcdefghijklmnopqrstuvwxyz 0123456789-?'<>`~!@#$%^&*()_-=.,;:":
+            view.display(key, flush=True)
+        elif key == '\\r':  # new line
+            view.display('\n', end='', flush=True)
+        elif key == '\\x08':  # backspace
+            view.backspace()
+        elif key == '\\x1b':  # esc
+            context.controller['status'] = Status.inactive
+        else:
+            view.display(key, flush=True)  # Delete this line

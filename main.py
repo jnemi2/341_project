@@ -10,9 +10,6 @@ import view.view as view
 
 controller.initiate()  # Do not use any module of MVC before initiating
 
-view.display("Hello ", bold=True, end='')
-view.display("world!")
-print(context.controller)
-print(context.model)
-print(context.view)
+controller.start()
+
 print("HELLO\x1b\x1b\x1b")

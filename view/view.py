@@ -49,6 +49,19 @@ def display(text, end='', bold=False, flush=False):
     print(aux, end=end, flush=flush)
 
 
+def backspace(can_delete_line=False):
+    """ Deletes the last character on the current screen
+    :param can_delete_line: bool indicating whether it is possible to delete a '\n'
+    """
+    screens = context.view['screens']
+    if len(screens) > 0:
+        if can_delete_line or screens[-1][-1] != '\n':
+            aux = screens[-1][:-1]
+            screens[-1] = aux
+            clear()
+            print(aux, end='', flush=True)
+
+
 def update_screen(text):
     """ Updates the content of a screen
     """
