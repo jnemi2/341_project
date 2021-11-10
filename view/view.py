@@ -43,6 +43,7 @@ def back_screen():
         screens.pop()
     clear()
     display(aux, end='', flush=True)
+    return aux
 
 
 def display(text, end='', bold=False, flush=False):
