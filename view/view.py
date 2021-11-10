@@ -30,6 +30,21 @@ def new_screen(text=""):
     clear()
 
 
+def back_screen():
+    """ Goes back to the previous screen, deleting the current screen
+    :return: str of updated screen
+    """
+    screens = context.view['screens']
+    aux = ""
+    if len(screens) > 1:
+        screens.pop()
+        aux = screens[-1]
+    elif len(screens) == 1:
+        screens.pop()
+    clear()
+    display(aux, end='', flush=True)
+
+
 def display(text, end='', bold=False, flush=False):
     """ Adds content to the current screen
     :param text: str to be displayed
