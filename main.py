@@ -12,4 +12,7 @@ controller.initiate()  # Do not use any module of MVC before initiating
 
 controller.start()
 
-print("HELLO\x1b\x1b\x1b")
+
+del context.controller
+del context.model
+del context.view
