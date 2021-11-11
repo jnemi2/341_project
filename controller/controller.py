@@ -3,7 +3,7 @@ import model.model as model
 import view.view as view
 from enum import Enum
 
-Status = Enum('Status', 'active requested inactive')
+Status = Enum('Status', 'active reading inactive')
 
 
 def initiate():
@@ -28,7 +28,8 @@ def start():
 def update():
     """ This code is executed in a loop until the status of controller is set to inactive
     """
-    trigger(view.get_key())  # calling keyboard triggers
+    if context.controller['status'] == Status.reading:
+        trigger(view.get_key())  # calling keyboard triggers
     # Calls to functions from other components
 
 
