@@ -19,6 +19,7 @@ def start():
     """ Starts the controller module
     """
     # start code goes here
+    model.start()
 
     # starts a loop until controller is deactivated
     while context.controller['status'] != Status.inactive:
@@ -28,9 +29,13 @@ def start():
 def update():
     """ This code is executed in a loop until the status of controller is set to inactive
     """
+    # behaviour of controller
+    key = view.get_key()
     if context.controller['status'] == Status.reading:
-        trigger(view.get_key())  # calling keyboard triggers
+        trigger(key)  # calling keyboard triggers
+
     # Calls to functions from other components
+    model.update()
 
 
 def trigger(key):
