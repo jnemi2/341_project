@@ -47,7 +47,7 @@ def back_screen():
     elif len(screens) == 1:
         screens.pop()
     clear()
-    display(aux, end='', flush=True)
+    print(aux, end='', flush=True)
     return aux
 
 
