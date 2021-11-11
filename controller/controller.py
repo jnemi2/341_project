@@ -51,3 +51,12 @@ def trigger(key):
             view.backspace()
         elif key == view.ESC:  # esc
             context.controller['status'] = Status.inactive
+
+
+def request(msg=""):
+    """ Changes the statuses of the components to handle user input
+    :param msg: str to clarify on requested information
+    """
+    context.controller['status'] = Status.reading
+    context.model['status'] = model.Status.standby
+    view.display(msg + "_\n", flush=True)
