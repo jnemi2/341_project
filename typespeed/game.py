@@ -2,12 +2,18 @@ import typespeed.words
 import typespeed.menu
 import typespeed.players as ply
 import typespeed.bot
+from typespeed import model
 import time
 import random
 import datetime
 
 from frontend.filemanager import load_pkl
-from frontend.view import clear, display, request
+from frontend.view import clear, display
+
+
+def pause():
+    """ Pauses the game and opens the pause menu
+    """
 
 
 def random_word(words):
@@ -87,7 +93,7 @@ def detect_input(word, case_insensitive, simulate=False, accuracy=1.0):
     display(word, bold=True)
     t0 = datetime.datetime.now()
     if not simulate:
-        text = request()
+        text = model.request()
     else:
         text = typespeed.bot.simulate(word, accuracy)
     stats.setdefault('time_diff', datetime.datetime.now() - t0)
