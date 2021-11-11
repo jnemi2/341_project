@@ -28,7 +28,8 @@ def start():
 def update():
     """ This code is executed in a loop until the status of controller is set to inactive
     """
-    trigger(view.get_key())
+    trigger(view.get_key())  # calling keyboard triggers
+    # Calls to functions from other components
 
 
 def trigger(key):
@@ -36,7 +37,7 @@ def trigger(key):
     :param key: str code of key pressed
     """
     if key != '':
-        if key.lower() in "abcdefghijklmnopqrstuvwxyz 0123456789-?'<>`~!@#$%^&*()_-=.,;:":
+        if key.lower() in "abcdefghijklmnopqrstuvwxyz 0123456789-?'<>`~!@#$%^&*+()_-=.,;:":
             view.display(key, flush=True)
         elif key == '\\r':  # new line
             view.display('\n', end='', flush=True)
@@ -44,5 +45,3 @@ def trigger(key):
             view.backspace()
         elif key == '\\x1b':  # esc
             context.controller['status'] = Status.inactive
-        else:
-            view.display(key, flush=True)  # Delete this line
