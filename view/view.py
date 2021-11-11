@@ -5,6 +5,11 @@ from enum import Enum
 
 Status = Enum('Status', 'active inactive requested')
 
+CHARSET = "abcdefghijklmnopqrstuvwxyz 0123456789-?'<>`~!@#$%^&*+()_-=.,;:"
+ENTER = '\\r'
+BACK_SPACE = '\\x08'
+ESC = '\\x1b'
+
 
 def initiate():
     """ Initiates the context of view

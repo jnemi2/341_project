@@ -43,11 +43,11 @@ def trigger(key):
     :param key: str code of key pressed
     """
     if key != '':
-        if key.lower() in "abcdefghijklmnopqrstuvwxyz 0123456789-?'<>`~!@#$%^&*+()_-=.,;:":
+        if key.lower() in view.CHARSET:
             view.display(key, flush=True)
-        elif key == '\\r':  # new line
+        elif key == view.ENTER:  # new line
             view.display('\n', end='', flush=True)
-        elif key == '\\x08':  # backspace
+        elif key == view.BACK_SPACE:  # backspace
             view.backspace()
-        elif key == '\\x1b':  # esc
+        elif key == view.ESC:  # esc
             context.controller['status'] = Status.inactive
