@@ -11,3 +11,5 @@ from frontend import view
 context.initiate()
 view.initiate()
 model.initiate()
+
+menu.start()

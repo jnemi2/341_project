@@ -1,7 +1,8 @@
-import frontend.filemanager
+from frontend import filemanager, view
+from typespeed import model
 import typespeed.players as ply
 import typespeed.game
-from frontend.view import clear, display, request
+
 
 max_players = 4
 min_players = 2
@@ -15,20 +16,21 @@ def select(message, options, numerate=True):
                      if False, the validation will match a the user's input with an option
     :return: A string matching an option in 'options'
     """
-    display(message)
+    view.display(message)
     n_options = []
     # displaying options
     if numerate:
         for i in range(len(options)):
-            display(str(i+1) + "- " + options[i])
+            view.display(str(i+1) + "- " + options[i])
             n_options.append(str(i+1))
     else:
         for i in options:
-            display("- " + i)
-    selection = request().strip().lower()
+            view.display("- " + i)
+    selection = model.request().strip().lower()
     # validation
     while selection not in options and (not numerate or (selection not in n_options)):
-        selection = input("Please, enter a valid option>>").strip().lower()
+        view.display("Please, enter a valid option")
+        selection = model.request().strip().lower()
     # returning a valid option
     if selection not in options:
         return options[int(selection) - 1]
@@ -56,7 +58,7 @@ def add_player(players):
                 bot_accuracy = 0.85
             players.append(ply.new_bot(name, bot_accuracy))
     else:
-        display("The maximum number of players has been reached.\n")
+        view.display("The maximum number of players has been reached.\n")
 
 
 def display_players(players):
@@ -64,8 +66,8 @@ def display_players(players):
     :param players: list of players to display
     """
     for i in range(len(players)):
-        display(str(i+1) + "- " + ply.format_player(players[i]))
-    display("\n")
+        view.display(str(i+1) + "- " + ply.format_player(players[i]) + '\n')
+    view.display("\n")
 
 
 def remove_player(players):
@@ -77,12 +79,12 @@ def remove_player(players):
         to_remove = input("Please, select the index of the player you'd like to remove: ")
         try:
             players.pop(int(to_remove) - 1)
-        except:
-            display("Unable to remove player number " + to_remove + ".\n")
+        except IndexError:
+            view.display("Unable to remove player number " + to_remove)
         else:
-            display("Player removed successfully.\n")
+            view.display("Player removed successfully.")
     else:
-        display("There are no players.\n")
+        view.display("There are no players.")
 
 
 def edit_players(players):
@@ -90,7 +92,7 @@ def edit_players(players):
     :param players: list of players to edit
     :return: list of players
     """
-    clear()
+    view.new_screen()
     selection = select("Options: ", ["list players", "add a player", "remove a player", "back"], numerate=True)
     while selection != "back":
         if selection == "list players":
@@ -100,13 +102,14 @@ def edit_players(players):
         else:
             remove_player(players)
         selection = select("Options: ", ["list players", "add a player", "remove a player", "back"], numerate=True)
+    view.back_screen()
 
 
 def config_game(config):
     """ Configures and starts a game with user parameters
     :param config: dictionary with game information
     """
-    clear()
+    view.new_screen()
     print("New game")
     selection = select("Options: ", ["start", "edit players", "back"])
     while selection != "back":
@@ -114,12 +117,13 @@ def config_game(config):
             edit_players(config['players'])
         else:
             if len(config['players']) < min_players:
-                display("You cannot play with less than " + str(min_players) + " players.")
+                view.display("You cannot play with less than " + str(min_players) + " players.")
             else:
                 config['mode'] = select("Select a game mode:", ["easy", "normal", "hard", "typespeed"])
                 typespeed.game.start(config)
                 break
         selection = select("Options: ", ["start", "edit players", "back"])
+    view.back_screen()
 
 
 def save(config):
@@ -129,7 +133,7 @@ def save(config):
     """
     selection = select("Would you like to save the game?", ["yes", "no"])
     if selection == "yes":
-        frontend.filemanager.save_pkl(config, "game.pkl")
+        filemanager.save_pkl(config, "game.pkl")
         return True
     return False
 
@@ -138,9 +142,9 @@ def resume():
     """ Loads the game configuration and resumes the game
     """
     try:
-        config = frontend.filemanager.load_pkl("game.pkl")
+        config = filemanager.load_pkl("game.pkl")
     except:
-        display("Unable to load file. Please, start a new game.")
+        view.display("Unable to load file. Please, start a new game.")
     else:
         typespeed.game.start(config)
 
@@ -148,6 +152,7 @@ def resume():
 def start():
     """ Game menu
     """
+    view.new_screen()
     config = {'mode': "normal", 'players': []}
     selection = select("Options: ", ["new game", "resume game", "exit"])
     while selection != "exit":
@@ -155,4 +160,6 @@ def start():
             config_game(config)
         else:
             resume()
+        view.clear()
         selection = select("Options: ", ["new game", "resume game", "exit"])
+    view.back_screen()

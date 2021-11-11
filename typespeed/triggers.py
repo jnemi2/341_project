@@ -8,14 +8,14 @@ def request():
     :return: str with user input
     """
     key = ''
-    view.display('\n')
+    view.display('')
     while key != view.ENTER:
         # update key
         key = view.get_key()
         # check triggers
         trigger(key)
     # return last line in screen
-    return context.view['screens'][-1].split('\n')[-1].strip()
+    return context.view['screens'][-1].split('\n')[-2]
 
 
 def trigger(key):
@@ -28,7 +28,7 @@ def trigger(key):
         if stat == model.Status.standby:
             # status defined behaviour
             if key.lower() in view.CHARSET:
-                view.display(key, flush=True)
+                view.display(key, end='', flush=True)
             elif key == view.ENTER:  # new line
                 view.display('\n', end='', flush=True)
             elif key == view.BACK_SPACE:  # backspace
