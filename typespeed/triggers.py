@@ -1,17 +1,30 @@
 from context import context
-import msvcrt
-
-CHARSET = "abcdefghijklmnopqrstuvwxyz 0123456789-?'<>`~!@#$%^&*+()_-=.,;:"
-ENTER = '\\r'
-BACK_SPACE = '\\x08'
-ESC = '\\x1b'
+from frontend import view
 
 
-def get_key():
-    """ Returns the code of the current pressed key or ''
-    :return: str of pressed key
+def request():
+    """ Reads an input from the user. Emulates input()
+    :return: str with user input
     """
-    if msvcrt.kbhit():
-        return str(msvcrt.getch())[2:-1]  # returns the last pressed key
-    else:
-        return ''
+    key = ''
+    while key != view.ENTER:
+        # update key
+        key = view.get_key()
+        # check triggers
+        trigger(key)
+    # return input
+
+
+def trigger(key):
+    """ Handles the actions triggered by the keyboard
+    :param key: str code of key pressed
+    """
+    if key != '':
+        if key.lower() in view.CHARSET:
+            view.display(key, flush=True)
+        elif key == view.ENTER:  # new line
+            view.display('\n', end='', flush=True)
+        elif key == view.BACK_SPACE:  # backspace
+            view.backspace()
+        elif key == view.ESC:  # esc
+            context.controller['status'] = Status.inactive  # pause
