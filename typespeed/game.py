@@ -158,13 +158,15 @@ def play_typespeed(player, words):
     :return:
     """
     clear()
-    display("You will be shown 15 words that you will need to type in the shortest possible time.", bold=True)  # Explanation
+    # Explanation
+    display("You will be shown 15 words that you will need to type in the shortest possible time.", bold=True)
     confirm_start(player['name'])
     word_distance = 0
     total_time = datetime.timedelta(seconds=0)
     words_len = 0
     # game logic
     for i in range(15):
+        clear()
         word = random_word(words).strip()
         if player['type'] == "bot":
             stats = detect_input(word, case_insensitive=False, simulate=True, accuracy=player['accuracy'])
@@ -185,6 +187,8 @@ def show_ranking(players):
     aux.sort(key=lambda x: int(round(x['stats']['score'])), reverse=True)
     for p in range(len(aux)):
         display("{}º {} ({})".format(p+1, aux[p]['name'], round(aux[p]['stats']['score'], 2)))
+    display("\nPress enter to continue.", end='\n', flush=True)
+    model.request()
 
 
 def start(config):
