@@ -66,8 +66,8 @@ def display_players(players):
     :param players: list of players to display
     """
     for i in range(len(players)):
-        view.display(str(i+1) + "- " + ply.format_player(players[i]) + '\n')
-    view.display("\n")
+        view.display(str(i+1) + "- " + ply.format_player(players[i]))
+    view.display("\n", end='', flush=True)
 
 
 def remove_player(players):
