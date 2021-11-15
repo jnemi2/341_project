@@ -103,6 +103,7 @@ def edit_players(players):
             remove_player(players)
         selection = select("Options: ", ["list players", "add a player", "remove a player", "back"], numerate=True)
     view.back_screen()
+    view.clear()
 
 
 def config_game(config):
