@@ -9,6 +9,7 @@ import datetime
 
 from frontend.filemanager import load_pkl
 from frontend.view import clear, display
+from context import context
 
 
 def pause():
@@ -96,7 +97,8 @@ def detect_input(word, case_insensitive, simulate=False, accuracy=1.0):
         text = model.request()
     else:
         text = typespeed.bot.simulate(word, accuracy)
-    stats.setdefault('time_diff', datetime.datetime.now() - t0)
+    stats.setdefault('time_diff', datetime.datetime.now() - t0 - context.model['pause_time'])
+    context.model['pause_time'] = datetime.timedelta(0)  # resets pause time
     if case_insensitive:
         text = text.lower()
         word = word.lower()
@@ -201,11 +203,13 @@ def start(config):
     for i in range(len(config['players'])):
         player = config['players'][i]
         if player['stats']['errors'] == 0:
+            context.model['status'] = model.Status.playing
             if mode != "typespeed":
                 play(player, words, rules[mode])
             else:
                 play_typespeed(player, words)
             # LOGIC AFTER EACH TURN
+            context.model['status'] = model.Status.active
             saved = False
             if i < len(config['players'])-1:
                 saved = typespeed.menu.save(config)

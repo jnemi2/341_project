@@ -37,6 +37,20 @@ def select(message, options, numerate=True):
     return selection
 
 
+def pause():
+    """ Opens the pause menu
+    """
+    # open new screen
+    view.new_screen()
+    view.display("Pause", bold=True, end='\n')
+    selection = select("options:", ['back'])
+    while selection != 'back':
+        view.clear()
+        selection = select("options:", ['back'])
+    # close pause screen
+    view.back_screen()
+
+
 def add_player(players):
     """ Adds a new player to the list of players
     :param players: list of players

@@ -1,5 +1,6 @@
 from context import context
-from typespeed import triggers
+from typespeed import triggers, menu
+import datetime
 from enum import Enum
 
 
@@ -10,11 +11,19 @@ def initiate():
     """ Initiates the context of model
     """
     context.model.setdefault('status', Status.active)
+    context.model.setdefault('pause', False)
+    context.model.setdefault('pause_time', datetime.timedelta(0))
 
 
 def pause():
     """ Pauses the game and calls the pause menu function
     """
+    if not context.model['pause'] and context.model['status'] == Status.standby:
+        context.model['pause'] = True  # set pause status
+        time_start = datetime.datetime.now()  # set pause time
+        menu.pause()  # open pause menu
+        context.model['pause_time'] = datetime.datetime.now() - time_start  # calculate pause time
+        context.model['pause'] = False  # set standby status
 
 
 def request():
