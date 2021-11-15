@@ -158,7 +158,7 @@ def resume():
     """
     try:
         config = filemanager.load_pkl("game.pkl")
-    except:
+    except FileNotFoundError:
         view.display("Unable to load file. Please, start a new game.")
     else:
         typespeed.game.start(config)
