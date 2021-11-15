@@ -1,5 +1,6 @@
 from context import context
 from typespeed import triggers, menu
+from frontend import filemanager
 import datetime
 from enum import Enum
 
@@ -13,6 +14,7 @@ def initiate():
     context.model.setdefault('status', Status.active)
     context.model.setdefault('pause', False)
     context.model.setdefault('pause_time', datetime.timedelta(0))
+    context.model.setdefault('config', {'mode': "normal", 'players': []})
 
 
 def pause():

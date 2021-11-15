@@ -1,3 +1,4 @@
+from context import context
 from frontend import filemanager, view
 from typespeed import model
 import typespeed.players as ply
@@ -158,6 +159,7 @@ def resume():
     """
     try:
         config = filemanager.load_pkl("game.pkl")
+        context.model['config'] = config
     except FileNotFoundError:
         view.display("Unable to load file. Please, start a new game.")
     else:
@@ -168,7 +170,7 @@ def start():
     """ Game menu
     """
     view.new_screen()
-    config = {'mode': "normal", 'players': []}
+    config = context.model['config']
     selection = select("Options: ", ["new game", "resume game", "exit"])
     while selection != "exit":
         if selection == "new game":

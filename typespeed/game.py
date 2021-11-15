@@ -197,7 +197,8 @@ def start(config):
     """ Starts a game with the specified configuration
     :param config: dictionary with game configuration
     """
-    rules = load_pkl('params.pkl')
+    context.model['pause_time'] = datetime.timedelta(0)  # reset pause time
+    rules = load_pkl("params.pkl")
     mode = config['mode']
     words = typespeed.words.load_words(mode)
     for i in range(len(config['players'])):
