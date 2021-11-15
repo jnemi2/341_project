@@ -136,17 +136,17 @@ def play(player, words, rules):
     errors = 0
     score = 0
     while errors < rules['errors']:
+        clear()
         word = random_word(words).strip()
+        display("Errors: ({}/{}) | Score: {}".format(errors, rules['errors'], score))
         if player['type'] == "bot":
             stats = detect_input(word, rules['case_insensitive'], simulate=True, accuracy=player['accuracy'])
         else:
             stats = detect_input(word, rules['case_insensitive'])
         if (stats['match'] != 0) or (stats['time_diff'] > datetime.timedelta(seconds=rules['time'])):
             errors += 1
-            display("Errors: ({}/{})".format(errors, rules['errors']))
         else:
             score += len(word)
-            display("Score: {}".format(score))
     player['stats']['score'] = score
     player['stats']['errors'] = errors
 
