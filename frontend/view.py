@@ -17,7 +17,6 @@ def initiate():
     """
     context.view.setdefault('status', Status.active)
     context.view.setdefault('screens', list())
-    context.view.setdefault('key', "")
 
 
 def __clear():
