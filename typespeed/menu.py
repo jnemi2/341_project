@@ -44,7 +44,7 @@ def pause():
     # open new screen
     view.new_screen()
     view.display("Pause", bold=True, end='\n')
-    selection = select("options:", ['back'])
+    selection = select("", ['back'])
     while selection != 'back':
         view.clear()
         selection = select("options:", ['back'])
