@@ -9,3 +9,13 @@ def initiate():
     global view
     model = dict()
     view = dict()
+
+
+def set_model(new_model):
+    global model
+    model = new_model
+
+
+def set_view(new_view):
+    global view
+    view = new_view

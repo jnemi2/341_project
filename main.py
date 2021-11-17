@@ -13,5 +13,3 @@ view.initiate()
 model.initiate()
 
 menu.start()
-
-print(context.view, context.model)
