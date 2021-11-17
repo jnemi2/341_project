@@ -1,5 +1,5 @@
 from context import context
-from typespeed import game, model
+from typespeed import model
 from frontend import view
 
 
