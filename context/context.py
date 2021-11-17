@@ -1,6 +1,5 @@
 global model  # type: dict
 global view  # type: dict
-global controller  # type: dict
 
 
 def initiate():
@@ -8,7 +7,15 @@ def initiate():
     """
     global model
     global view
-    global controller
     model = dict()
     view = dict()
-    controller = dict()
+
+
+def set_model(new_model):
+    global model
+    model = new_model
+
+
+def set_view(new_view):
+    global view
+    view = new_view

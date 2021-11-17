@@ -151,7 +151,9 @@ def save(config):
     """
     selection = select("Would you like to save the game?", ["yes", "no"])
     if selection == "yes":
-        filemanager.save_pkl(config, "game.pkl")
+        # filemanager.save_pkl(config, "game.pkl")
+        package = {'model': context.model, 'view': context.view}
+        filemanager.save_pkl(package, "game.pkl")
         return True
     return False
 
@@ -160,24 +162,26 @@ def resume():
     """ Loads the game configuration and resumes the game
     """
     try:
-        config = filemanager.load_pkl("game.pkl")
-        context.model['config'] = config
+        # load game data
+        package = filemanager.load_pkl("game.pkl")
+        context.set_model(package['model'])
+        context.set_view(package['view'])
     except FileNotFoundError:
         view.display("Unable to load file. Please, start a new game.\nPress enter to continue.")
         model.request()
     else:
-        typespeed.game.start(config)
+        typespeed.game.start(context.model['config'])
+        view.back_screen()
 
 
 def start():
     """ Game menu
     """
     view.new_screen()
-    config = context.model['config']
     selection = select("Options: ", ["new game", "resume game", "exit"])
     while selection != "exit":
         if selection == "new game":
-            config_game(config)
+            config_game(context.model['config'])
         else:
             resume()
         view.clear()
