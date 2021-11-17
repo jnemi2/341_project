@@ -2,12 +2,19 @@ import typespeed.words
 import typespeed.menu
 import typespeed.players as ply
 import typespeed.bot
+from typespeed import model
 import time
 import random
 import datetime
 
 from frontend.filemanager import load_pkl
-from frontend.view import clear, display, request
+from frontend.view import clear, display
+from context import context
+
+
+def pause():
+    """ Pauses the game and opens the pause menu
+    """
 
 
 def random_word(words):
@@ -87,10 +94,11 @@ def detect_input(word, case_insensitive, simulate=False, accuracy=1.0):
     display(word, bold=True)
     t0 = datetime.datetime.now()
     if not simulate:
-        text = request()
+        text = model.request()
     else:
         text = typespeed.bot.simulate(word, accuracy)
-    stats.setdefault('time_diff', datetime.datetime.now() - t0)
+    stats.setdefault('time_diff', datetime.datetime.now() - t0 - context.model['pause_time'])
+    context.model['pause_time'] = datetime.timedelta(0)  # resets pause time
     if case_insensitive:
         text = text.lower()
         word = word.lower()
@@ -130,17 +138,17 @@ def play(player, words, rules):
     errors = 0
     score = 0
     while errors < rules['errors']:
+        clear()
         word = random_word(words).strip()
+        display("Errors: ({}/{}) | Score: {}".format(errors, rules['errors'], score))
         if player['type'] == "bot":
             stats = detect_input(word, rules['case_insensitive'], simulate=True, accuracy=player['accuracy'])
         else:
             stats = detect_input(word, rules['case_insensitive'])
         if (stats['match'] != 0) or (stats['time_diff'] > datetime.timedelta(seconds=rules['time'])):
             errors += 1
-            display("Errors: ({}/{})".format(errors, rules['errors']))
         else:
             score += len(word)
-            display("Score: {}".format(score))
     player['stats']['score'] = score
     player['stats']['errors'] = errors
 
@@ -152,13 +160,15 @@ def play_typespeed(player, words):
     :return:
     """
     clear()
-    display("You will be shown 15 words that you will need to type in the shortest possible time.", bold=True)  # Explanation
+    # Explanation
+    display("You will be shown 15 words that you will need to type in the shortest possible time.", bold=True)
     confirm_start(player['name'])
     word_distance = 0
     total_time = datetime.timedelta(seconds=0)
     words_len = 0
     # game logic
     for i in range(15):
+        clear()
         word = random_word(words).strip()
         if player['type'] == "bot":
             stats = detect_input(word, case_insensitive=False, simulate=True, accuracy=player['accuracy'])
@@ -179,23 +189,28 @@ def show_ranking(players):
     aux.sort(key=lambda x: int(round(x['stats']['score'])), reverse=True)
     for p in range(len(aux)):
         display("{}º {} ({})".format(p+1, aux[p]['name'], round(aux[p]['stats']['score'], 2)))
+    display("\nPress enter to continue.", end='\n', flush=True)
+    model.request()
 
 
 def start(config):
     """ Starts a game with the specified configuration
     :param config: dictionary with game configuration
     """
-    rules = load_pkl('params.pkl')
+    context.model['pause_time'] = datetime.timedelta(0)  # reset pause time
+    rules = load_pkl("params.pkl")
     mode = config['mode']
     words = typespeed.words.load_words(mode)
     for i in range(len(config['players'])):
         player = config['players'][i]
         if player['stats']['errors'] == 0:
+            context.model['status'] = model.Status.playing
             if mode != "typespeed":
                 play(player, words, rules[mode])
             else:
                 play_typespeed(player, words)
             # LOGIC AFTER EACH TURN
+            context.model['status'] = model.Status.active
             saved = False
             if i < len(config['players'])-1:
                 saved = typespeed.menu.save(config)
