@@ -57,7 +57,8 @@ def add_player(players):
     :param players: list of players
     """
     if len(players) < max_players:
-        name = input("Enter player's name: ")
+        view.display("Enter player's name: ", end='\n')
+        name = model.request().strip()
         player_type = select("Select player type:", ["human", "bot"])
         if player_type == "human":
             # new human
@@ -91,7 +92,8 @@ def remove_player(players):
     """
     if len(players) > 0:
         display_players(players)
-        to_remove = input("Please, select the index of the player you'd like to remove: ")
+        view.display("Please, select the index of the player you'd like to remove: ", end='\n')
+        to_remove = model.request().strip()
         try:
             players.pop(int(to_remove) - 1)
         except IndexError:
